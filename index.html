@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="퍼플아이는 칠판에만 있는 강의 내용을 AI가 제때 말로 설명해, 시각장애 학생도 일반 인터넷 강의로 공부할 수 있게 만듭니다.">
+<title>퍼플아이</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Poppins:wght@500;600&display=swap">
+<script>
+(function () {
+  var views = ['home', 'business', 'company', 'join', 'story', 'family', 'teacher', 'creator'];
+  var sections = { problem: 'business', how: 'business', listen: 'business', scope: 'business', meaning: 'company', values: 'company', partners: 'join', contact: 'join' };
+  var id = (location.hash || '').slice(1);
+  var view = views.indexOf(id) >= 0 ? id : (sections[id] || 'home');
+  document.documentElement.setAttribute('data-view', view);
+  document.documentElement.setAttribute('lang', 'ko');
+})();
+</script>
+<style>
+/* 구조: 머리말 메뉴와 첫 화면 슬로건, 사업 소개 · 회사 소개 · 함께하기는 버전 1에서 가져오고,
+   첫 화면의 소리로 듣는 무대 · '어떤 분이세요?'와 대상별 페이지(시작한 이야기 · 학생·부모님 ·
+   특수교사·복지관 · 강의하는 분)는 버전 2 그대로. 어두운 바탕이 기본. */
+:root {
+  /* 색: 퍼플아이 보라 단색. 어두운 바탕이 기본 */
+  --bg: #1A1140;
+  --bg-2: #221852;
+  --ink: #F3EEFF;
+  --ink-soft: #CDC2EE;
+  --accent: #C9B5FF;
+  --eye: #C9B5FF;
+  --fill: #5A36C9;
+  --on-fill: #FFFFFF;
+  --line: #3A2E73;
+  --focus: #C9B5FF;
+  /* 무대(첫 화면·바닥글)는 두 테마 모두 어둡게 */
+  --stage: #0F0A26;
+  --stage-raise: #1A1140;
+  --stage-ink: #F3EEFF;
+  --stage-soft: #CDC2EE;
+  --stage-accent: #C9B5FF;
+  --stage-line: #3A2E73;
+  /* 배경 결: 빛 번짐·모눈·점 (고대비 설정·인쇄에서는 꺼짐) */
+  --glow: rgba(201, 181, 255, 0.13);
+  --grid: rgba(201, 181, 255, 0.07);
+  --tint: #201651;
+  --stage-raise-2: #221852;
+  --header-bg: rgba(26, 17, 64, 0.86);
+  --fill-2: #4A2BB0;
+  --dots: rgba(255, 255, 255, 0.14);
+  --stage-glow: rgba(90, 54, 201, 0.38);
+  --stage-gold: rgba(224, 161, 0, 0.10);
+  --stage-grid: rgba(243, 238, 255, 0.05);
+  /* 로고 색: 보라 #2A1262 · 골드 #E0A100 (어두운 바탕에서는 p·'purple'이 흰색) */
+  --logo-p: #FFFFFF;
+  --logo-e: #E0A100;
+  --logo-p-on-dark: #FFFFFF;
+  color-scheme: dark;
+  /* 글꼴 */
+  --font-ko: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", system-ui, sans-serif;
+  --font-en: "Poppins", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  /* 크기: 굵고 큰 제목, 작은 설명 */
+  --t-caption: 0.8125rem;
+  --t-small: 0.875rem;
+  --t-desc: 0.9375rem;
+  --t-h2: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  --t-path: clamp(1.5rem, 1.1rem + 1.8vw, 2.5rem);
+  --t-page: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+  --t-hero: clamp(2.25rem, 1.3rem + 3.8vw, 4rem);
+  --t-cap: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  --wrap: 72rem;
+  /* 버전 1에서 가져온 구역(첫 화면 슬로건 · 사업 소개 · 회사 소개 · 함께하기) */
+  --paper: #1A1140;
+  --band: #221852;
+  --on-accent: #1A1140;
+  --track-teacher: #CDC2EE;
+  --track-narration: #9B86D9;
+  --measure: 38rem;
+  --radius: 16px;
+  --t-h1: clamp(2rem, 1.3rem + 2.6vw, 3.125rem);
+  --t-h3: 1.125rem;
+  --t-block: clamp(1.25rem, 1.05rem + 0.7vw, 1.5rem);
+  --t-head: clamp(1.875rem, 1.4rem + 1.8vw, 2.5rem);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F5F1FF;
+    --bg-2: #FFFFFF;
+    --ink: #2A1659;
+    --ink-soft: #4A3F6B;
+    --accent: #5A36C9;
+    --eye: #7352DB;
+    --fill: #5A36C9;
+    --on-fill: #FFFFFF;
+    --line: #DCD1FA;
+    --focus: #5A36C9;
+    --stage: #1A1140;
+    --stage-raise: #221852;
+    --stage-ink: #F3EEFF;
+    --stage-soft: #CDC2EE;
+    --stage-accent: #C9B5FF;
+    --stage-line: #3A2E73;
+    --glow: rgba(115, 82, 219, 0.14);
+    --grid: rgba(90, 54, 201, 0.075);
+    --tint: #F3EEFF;
+    --stage-raise-2: #2A1F63;
+    --header-bg: rgba(252, 251, 255, 0.86);
+    --fill-2: #4A2BB0;
+    --dots: rgba(255, 255, 255, 0.14);
+    --stage-glow: rgba(90, 54, 201, 0.38);
+    --stage-gold: rgba(224, 161, 0, 0.10);
+    --stage-grid: rgba(243, 238, 255, 0.05);
+    --paper: #FCFBFF;
+    --band: #F5F1FF;
+    --on-accent: #FFFFFF;
+    --track-teacher: #4A3F6B;
+    --track-narration: #7352DB;
+    --logo-p: #2A1262;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F5F1FF;
+  --bg-2: #FFFFFF;
+  --ink: #2A1659;
+  --ink-soft: #4A3F6B;
+  --accent: #5A36C9;
+  --eye: #7352DB;
+  --fill: #5A36C9;
+  --on-fill: #FFFFFF;
+  --line: #DCD1FA;
+  --focus: #5A36C9;
+  --stage: #1A1140;
+  --stage-raise: #221852;
+  --stage-ink: #F3EEFF;
+  --stage-soft: #CDC2EE;
+  --stage-accent: #C9B5FF;
+  --stage-line: #3A2E73;
+  --glow: rgba(115, 82, 219, 0.14);
+  --grid: rgba(90, 54, 201, 0.075);
+  --tint: #F3EEFF;
+  --stage-raise-2: #2A1F63;
+  --header-bg: rgba(252, 251, 255, 0.86);
+  --fill-2: #4A2BB0;
+  --dots: rgba(255, 255, 255, 0.14);
+  --stage-glow: rgba(90, 54, 201, 0.38);
+  --stage-gold: rgba(224, 161, 0, 0.10);
+  --stage-grid: rgba(243, 238, 255, 0.05);
+  --paper: #FCFBFF;
+  --band: #F5F1FF;
+  --on-accent: #FFFFFF;
+  --track-teacher: #4A3F6B;
+  --track-narration: #7352DB;
+  --logo-p: #2A1262;
+  color-scheme: light;
+}
+
+/* 페이지 전환: 지금 페이지만 보이게 (스크립트가 꺼져 있으면 전부 보임) */
+html[data-view="home"] .view:not(#home),
+html[data-view="business"] .view:not(#business),
+html[data-view="company"] .view:not(#company),
+html[data-view="join"] .view:not(#join),
+html[data-view="family"] .view:not(#family),
+html[data-view="teacher"] .view:not(#teacher),
+html[data-view="creator"] .view:not(#creator),
+html[data-view="story"] .view:not(#story) { display: none; }
+/* 주소의 #이 페이지 이름이어도 브라우저가 그 상자로 내려가지 않고 맨 위에서 시작하게 */
+.view { scroll-margin-top: 100vh; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ko);
+  font-size: 1rem;
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3 { margin: 0; font-weight: 700; line-height: 1.3; letter-spacing: -0.02em; text-wrap: balance; }
+p, ul, ol, figure, table { margin: 0; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 768px) {
+  .wrap {
+    padding-left: max(40px, env(safe-area-inset-left, 0px));
+    padding-right: max(40px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* 본문 바로가기 */
+.skip {
+  position: absolute;
+  z-index: 30;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: var(--fill);
+  color: var(--on-fill);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-300%);
+}
+.skip:focus { transform: none; }
+
+/* 머리글 */
+/* 머리말: 화면 위에 고정, 뒤가 살짝 비치는 반투명 */
+.site-header { z-index: 40; background: var(--header-bg); border-bottom: 1px solid var(--line); }
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .site-header { -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px); }
+}
+/* 휴대폰 폭에서는 머리말이 두 줄이라 고정하지 않고, 720px부터 화면 위에 고정 */
+@media (min-width: 720px) {
+  .site-header { position: sticky; top: 0; }
+  .block, .sec, .contact-band, .steps-sec, .paths-sec { scroll-margin-top: 84px; }
+}
+.header-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; padding-block: 12px; }
+.brand { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
+/* 로고(둥근 글자 v3): 심볼 높이 = 글자 높이 × 1.518, 사이 0.393em (로고 보드 255 : 66 : 168), 위아래 가운데 맞춤 */
+.lockup { display: inline-flex; align-items: center; gap: 0.393em; margin: 0; font-size: 1.375rem; line-height: 1; white-space: nowrap; }
+.pe-mark { height: 1.518em; width: auto; flex: none; }
+.lockup-word { height: 1em; width: auto; flex: none; }
+.rl-p { stroke: var(--logo-p); }
+.rl-e { stroke: var(--logo-e); }
+/* 'purpleeye 이름에 담은 뜻' 제목: 둥근 글자 로고(선)를 그림으로 넣고, 화면낭독기는 '퍼플아이 이름에 담은 뜻'으로 읽는다 */
+.wordmark { display: inline-block; width: 4.995em; height: 1.002em; vertical-align: -0.262em; font-size: 1.2em; }
+.lockup .wordmark { font-size: inherit; vertical-align: baseline; height: 1em; width: auto; }
+.nowrap { white-space: nowrap; }
+.nav { list-style: none; padding: 0; margin-inline: -12px; display: flex; flex-wrap: wrap; gap: 0 2px; }
+.nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px; color: var(--ink); font-size: 0.9375rem; font-weight: 500; text-decoration: none; }
+.nav a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.35em; }
+.nav a[aria-current="page"] { color: var(--accent); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.35em; }
+@media (min-width: 720px) {
+  .nav a.nav-cta { margin-left: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+  .nav a.nav-cta:hover { text-decoration: none; filter: brightness(1.06); }
+  .nav a.nav-cta[aria-current="page"] { color: var(--on-accent); text-decoration: none; box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent); }
+}
+
+/* ── 첫 화면: 소리로 듣는 무대 ── */
+.stage { background: var(--stage); color: var(--stage-ink); padding-block: clamp(40px, 6vw, 88px) clamp(24px, 3vw, 40px); }
+.stage :focus-visible { outline-color: var(--stage-accent); }
+.stage-grid { display: grid; gap: clamp(28px, 4vw, 56px); align-items: center; }
+@media (min-width: 960px) { .stage-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); } }
+.stage-copy { display: grid; gap: 20px; min-width: 0; }
+.kicker { font-size: var(--t-small); font-weight: 700; letter-spacing: 0.02em; color: var(--stage-accent); }
+.stage-title { font-size: var(--t-hero); font-weight: 900; line-height: 1.18; letter-spacing: -0.035em; color: var(--stage-ink); }
+.stage-desc { max-width: 34rem; font-size: 1rem; color: var(--stage-soft); }
+.player { display: flex; flex-wrap: wrap; gap: 10px; }
+.player-status { min-height: 1.5em; font-size: var(--t-small); color: var(--stage-soft); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  font-family: var(--font-ko);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 10px 24px -14px rgba(90, 54, 201, 0.7); }
+.btn-ghost { background: transparent; color: var(--accent); }
+.btn-quiet { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+.btn-solid { background: var(--stage-accent); border-color: var(--stage-accent); color: var(--stage); }
+.btn-line { background: transparent; border-color: var(--stage-accent); color: var(--stage-accent); }
+.stage .btn-quiet { background: transparent; border-color: var(--stage-line); color: var(--stage-soft); }
+.btn:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 0.22em; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.caption-card { display: grid; gap: 18px; min-width: 0; padding: clamp(18px, 2.5vw, 28px); border: 1px solid var(--stage-line); border-radius: 20px; background: var(--stage-raise) linear-gradient(180deg, var(--stage-raise-2), var(--stage-raise)); }
+.scene-label { font-size: var(--t-caption); color: var(--stage-soft); }
+.dots { display: flex; flex-wrap: wrap; gap: 14px; }
+.grp { display: grid; grid-template-columns: repeat(2, 14px); gap: 8px; padding: 12px; border: 2px dashed var(--stage-accent); border-radius: 18px; }
+.grp i { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--stage-ink); }
+.caption { display: grid; gap: 10px; align-content: start; min-height: 7.5em; }
+.cap-who { justify-self: start; padding: 1px 10px; border: 1px solid var(--stage-accent); border-radius: 999px; font-size: var(--t-caption); font-weight: 700; line-height: 1.7; color: var(--stage-accent); }
+.cap-who.is-n { background: var(--stage-accent); color: var(--stage); }
+.cap-line { font-size: var(--t-cap); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; color: var(--stage-ink); }
+
+.transcript { margin-top: clamp(24px, 3vw, 36px); border-top: 1px solid var(--stage-line); }
+.transcript summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; list-style: none; cursor: pointer; font-weight: 700; color: var(--stage-accent); }
+.transcript summary::-webkit-details-marker { display: none; }
+.transcript summary::after { content: "+"; content: "+" / ""; font-family: var(--font-en); font-size: 1.5rem; line-height: 1; }
+.transcript[open] summary::after { content: "−"; content: "−" / ""; }
+.lines { list-style: none; padding: 0 0 8px; display: grid; gap: 8px; }
+.lines li { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; font-size: var(--t-desc); color: var(--stage-ink); }
+.lines .who { font-size: var(--t-caption); font-weight: 700; color: var(--stage-soft); }
+.lines .who-n { color: var(--stage-accent); }
+.lines li.is-speaking { background: var(--stage-raise); }
+.transcript .note { padding-bottom: 16px; font-size: var(--t-caption); color: var(--stage-soft); }
+
+/* 첫 화면: 예시 장면 두 가지 — 좌우로 넘기거나 아래 점을 눌러 바꾼다 */
+.scenes { display: grid; gap: 10px; min-width: 0; }
+.scene-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 20px; }
+.scene-track::-webkit-scrollbar { display: none; }
+.scene-track:focus { outline: none; }
+@media (prefers-reduced-motion: no-preference) { .scene-track { scroll-behavior: smooth; } }
+.scene { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; align-content: start; }
+.scene-pic { display: grid; align-items: center; justify-items: start; min-height: clamp(9rem, 6rem + 8vw, 12rem); }
+.scene-dots { display: flex; justify-content: center; gap: 2px; }
+.scene-dot { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer; }
+.scene-dot::before { content: ""; width: 10px; height: 10px; border-radius: 999px; background: var(--stage-soft); opacity: 0.6; }
+.scene-dot[aria-current="true"]::before { width: 28px; background: var(--stage-accent); opacity: 1; }
+@media (prefers-reduced-motion: no-preference) { .scene-dot::before { transition: width 0.2s ease, background-color 0.2s ease; } }
+.scene-dot:focus-visible { outline: 3px solid var(--stage-accent); outline-offset: -4px; }
+.sum {
+  display: grid;
+  grid-template-columns: repeat(4, 0.92em);
+  grid-template-rows: 0.62em 1.12em 1.12em 0.34em 1.12em;
+  font-family: var(--font-en);
+  font-weight: 600;
+  font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+  line-height: 1;
+  color: var(--stage-ink);
+  font-variant-numeric: tabular-nums;
+}
+.sum .cell { display: grid; place-items: center; }
+.sum .op { grid-column: 1; }
+.sum .c100 { grid-column: 2; }
+.sum .c10 { grid-column: 3; }
+.sum .c1 { grid-column: 4; }
+.sum .r1 { grid-row: 1; }
+.sum .r2 { grid-row: 2; }
+.sum .r3 { grid-row: 3; }
+.sum .r5 { grid-row: 5; }
+.sum .carry { align-self: end; font-size: 0.44em; color: var(--stage-accent); }
+.sum .ans { color: var(--stage-accent); }
+.sum .rule { grid-column: 1 / 5; grid-row: 4; align-self: center; height: 3px; border-radius: 2px; background: var(--stage-ink); }
+.sum .ring { grid-column: 4; grid-row: 2 / 6; margin: -0.06em 0.02em; border: 2px dashed var(--stage-accent); border-radius: 999px; opacity: 0.75; }
+.transcript [hidden] { display: none; }
+.lines-title { padding: 10px 0 8px; font-size: var(--t-small); font-weight: 700; color: var(--stage-soft); }
+
+/* 첫 화면: 어떤 분이세요? */
+.paths-sec { padding-block: clamp(48px, 7vw, 96px); }
+/* 어떤 분이세요?: 아이콘 카드 세 장 */
+.paths { list-style: none; padding: 0; display: grid; gap: 14px; }
+.paths li { display: grid; } /* 카드 세 장 높이를 맞춤 */
+@media (min-width: 800px) { .paths { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.path { display: grid; gap: 10px; align-content: start; min-width: 0; padding: clamp(20px, 2.5vw, 28px); border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2) linear-gradient(180deg, var(--bg-2), var(--tint)); color: var(--ink); text-decoration: none; }
+.path-icon { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 6px; border-radius: 12px; background: var(--fill); color: var(--on-fill); }
+.path-icon svg { width: 24px; height: 24px; }
+.path-title { font-size: 1.375rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; }
+.path-desc { font-size: var(--t-desc); color: var(--ink-soft); }
+.path:hover, .path:focus-visible { border-color: var(--accent); }
+.path:hover .path-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
+@media (prefers-reduced-motion: no-preference) {
+  .path { transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
+  .path:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -20px rgba(42, 18, 98, 0.45); }
+}
+/* 구역 머리글(작은 보라 표지 + 제목) */
+.sec-head { display: grid; gap: 8px; margin-bottom: clamp(24px, 3vw, 40px); }
+.sec-label { font-size: var(--t-small); font-weight: 700; letter-spacing: 0.02em; color: var(--accent); }
+.sec-head h2 { font-size: var(--t-h2); }
+/* 홈: 네 단계 */
+.steps-sec { padding-block: clamp(48px, 7vw, 96px); background: var(--paper); border-bottom: 1px solid var(--line); }
+.steps4 { list-style: none; padding: 0; display: grid; gap: 14px; }
+@media (min-width: 720px) { .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .steps4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.steps4 li { display: grid; gap: 8px; align-content: start; min-width: 0; padding: 22px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg-2) linear-gradient(180deg, var(--bg-2), var(--tint)); }
+.steps4 h3 { display: flex; align-items: baseline; gap: 8px; font-size: 1.125rem; }
+.steps4 .num { font-family: var(--font-en); font-weight: 600; font-size: 0.9375rem; letter-spacing: 0.06em; color: var(--accent); }
+.steps4 p { font-size: var(--t-desc); color: var(--ink-soft); }
+.more { margin-top: 20px; }
+.more a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+/* 홈: 지금 단계 띠 (연락 띠와 같은 보라 바탕) */
+.cta-band .wrap { gap: 12px; }
+.cta-band .sec-label { color: rgba(255, 255, 255, 0.85); }
+.cta-band .actions { margin-top: 8px; }
+.cta-band .btn-onfill { background: var(--on-fill); border-color: var(--on-fill); color: var(--fill); }
+.cta-band .btn-onfill-ghost { background: transparent; border-color: var(--on-fill); color: var(--on-fill); }
+.story-link { margin-top: 16px; }
+.story-link a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+
+/* 첫 화면: 슬로건 (버전 1에서 가져옴) */
+.hero { background: var(--paper); padding-block: clamp(40px, 6vw, 88px) clamp(40px, 5vw, 64px); }
+.hero .wrap { display: grid; gap: clamp(32px, 4vw, 48px); }
+.hero-head { display: grid; gap: 20px; }
+.eyebrow { font-family: var(--font-en); font-weight: 500; font-size: var(--t-caption); line-height: 1.5; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+@media (max-width: 380px) { .eyebrow { letter-spacing: 0.24em; } }
+.hero h1 { font-size: clamp(2.25rem, 1.2rem + 3.4vw, 3.75rem); line-height: 1.16; letter-spacing: -0.035em; font-weight: 800; }
+.h1-line { display: block; text-wrap: balance; }
+.h1-lead { font-weight: 500; font-size: 0.72em; letter-spacing: -0.02em; margin-bottom: 0.28em; color: var(--ink-soft); }
+/* 둘째·셋째 줄: 진보라→강조 보라 그라디언트 글자(C안). 가장 밝은 끝(강조 보라)도 바탕과 4.5:1 이상 */
+.h1-grad { line-height: 1.3; background: linear-gradient(100deg, var(--ink) 0%, var(--accent) 80%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.hero-desc { max-width: 34rem; font-size: 1.0625rem; color: var(--ink-soft); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ── 사업 소개 · 회사 소개 · 함께하기 공통 (버전 1에서 가져옴) ── */
+#business, #company, #join { background: var(--paper); }
+.page-head { padding-block: clamp(40px, 6vw, 72px) clamp(28px, 4vw, 44px); background: var(--band) linear-gradient(180deg, var(--band), var(--paper)); border-bottom: 1px solid var(--line); }
+.page-head .wrap { display: grid; gap: 12px; }
+/* 하위 페이지 머리 오른쪽의 옅은 심볼 */
+.page-head, .page-hero { overflow: hidden; }
+.head-mark { display: none; position: absolute; right: 4%; top: 50%; height: 150%; width: auto; transform: translateY(-50%); opacity: 0.07; pointer-events: none; }
+@media (min-width: 960px) { .head-mark { display: block; } }
+.page-head h1 { font-size: var(--t-head); letter-spacing: -0.02em; }
+.page-desc { max-width: var(--measure); font-size: 1rem; color: var(--ink-soft); }
+
+.block { padding-block: clamp(36px, 5vw, 56px); }
+.block + .block { border-top: 1px solid var(--line); }
+.block .wrap { display: grid; gap: 20px 48px; }
+@media (min-width: 900px) { .block .wrap { grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); } }
+.block-head { display: grid; gap: 8px; align-content: start; }
+.block-head h2 { font-size: var(--t-block); }
+.block-desc { font-size: var(--t-small); line-height: 1.65; color: var(--ink-soft); }
+.block-body { display: grid; gap: 20px; min-width: 0; max-width: 44rem; }
+
+.items { list-style: none; padding: 0; display: grid; }
+.item { display: grid; gap: 4px; padding-block: 18px; border-top: 1px solid var(--line); min-width: 0; }
+.item:first-child { padding-top: 0; border-top: 0; }
+.item:last-child { padding-bottom: 0; }
+.item h3 { font-size: var(--t-h3); }
+.item p { font-size: var(--t-desc); line-height: 1.75; color: var(--ink-soft); }
+.items.numbered { counter-reset: step; }
+.items.numbered .item { counter-increment: step; grid-template-columns: 2rem minmax(0, 1fr); column-gap: 8px; }
+.items.numbered .item::before { content: counter(step); grid-row: 1 / span 2; font-family: var(--font-en); font-weight: 600; font-size: 1rem; line-height: 1.6; color: var(--accent); }
+.items.numbered .item > * { grid-column: 2; }
+
+/* 사업 소개: 예시로 들어 보기 */
+.block .player { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.block .player-status { flex-basis: 100%; min-height: 1.5em; font-size: var(--t-small); color: var(--ink-soft); }
+.player-tip { font-size: var(--t-caption); color: var(--ink-soft); }
+.tracks-fig { display: grid; gap: 14px; padding: 20px; border-radius: var(--radius); background: var(--band); }
+.tracks { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); grid-template-rows: 26px 26px auto; gap: 8px 12px; align-items: center; }
+.lane-label { font-size: var(--t-caption); font-weight: 700; line-height: 1; color: var(--ink-soft); }
+.lane { position: relative; height: 26px; border-radius: 6px; background: var(--paper); }
+.seg { position: absolute; top: 3px; bottom: 3px; border-radius: 5px; }
+.seg.t { background: var(--track-teacher); }
+.seg.n { background: var(--track-narration); }
+.seg.pause { background: repeating-linear-gradient(135deg, var(--track-teacher) 0 2px, transparent 2px 7px); box-shadow: inset 0 0 0 1.5px var(--track-teacher); }
+/* 해설본 전체 21초 기준 위치 */
+.s-a { left: 0; width: calc(14.2857% - 1px); }
+.s-b { left: calc(38.0952% + 1px); width: calc(23.8095% - 2px); }
+.s-c { left: calc(61.9048% + 1px); width: calc(23.8095% - 2px); }
+.s-d { left: calc(85.7143% + 1px); width: calc(14.2857% - 1px); }
+.s-n1 { left: calc(14.2857% + 1px); width: calc(19.0476% - 2px); }
+.s-n2 { left: calc(61.9048% + 1px); width: calc(23.8095% - 2px); }
+.ticks { grid-column: 2; position: relative; height: 1.4em; font-family: var(--font-en); font-size: 0.75rem; line-height: 1.4; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.ticks .k0 { left: 0; transform: none; }
+.ticks .k5 { left: 23.8095%; }
+.ticks .k10 { left: 47.619%; }
+.ticks .k15 { left: 71.4286%; }
+.ticks .k20 { left: 95.2381%; }
+.tracks-fig figcaption { display: grid; gap: 8px; font-size: var(--t-caption); line-height: 1.6; color: var(--ink-soft); }
+.legend { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.legend li { display: inline-flex; align-items: center; gap: 8px; }
+.key { display: inline-block; width: 22px; height: 12px; border-radius: 3px; }
+.key-t { background: var(--track-teacher); }
+.key-n { background: var(--track-narration); }
+.key-p { background: repeating-linear-gradient(135deg, var(--track-teacher) 0 2px, transparent 2px 6px); box-shadow: inset 0 0 0 1.5px var(--track-teacher); }
+
+.script { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--t-small); line-height: 1.6; }
+.script caption { caption-side: top; padding-bottom: 10px; text-align: left; font-size: var(--t-desc); font-weight: 700; }
+.script col.c-tc { width: 5.5em; }
+.script th { padding: 8px 10px; border-bottom: 2px solid var(--ink); text-align: left; font-size: var(--t-caption); font-weight: 700; color: var(--ink-soft); }
+.script td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.script td.tc { font-family: var(--font-en); font-size: var(--t-caption); color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.script td.muted, .script td.empty { color: var(--ink-soft); }
+.script tr.is-speaking td { background: var(--band); }
+@media (prefers-reduced-motion: no-preference) { .script td { transition: background-color 0.2s ease; } }
+@media (max-width: 480px) {
+  .script th, .script td { padding-inline: 6px; }
+  .script col.c-tc { width: 4.4em; }
+}
+.chip { display: inline-block; margin: 0 6px 4px 0; padding: 0 8px; border: 1px solid var(--accent); border-radius: 999px; font-size: 0.75rem; font-weight: 700; line-height: 1.7; color: var(--accent); }
+.note { font-size: var(--t-caption); color: var(--ink-soft); }
+.block .placeholder { border-color: var(--accent); color: var(--accent); }
+
+/* 함께하기: 연락처 */
+.contact-line { font-size: 1rem; }
+
+/* ── 대상별 페이지 공통 ── */
+.page-hero { padding-block: clamp(44px, 7vw, 96px) clamp(32px, 4vw, 56px); border-bottom: 2px solid var(--ink); }
+.page-hero .wrap { display: grid; gap: 16px; }
+.page-hero h1 { font-size: var(--t-page); font-weight: 900; line-height: 1.15; letter-spacing: -0.035em; }
+.page-lead { max-width: 36rem; font-size: 1.0625rem; color: var(--ink-soft); }
+.badge { justify-self: start; padding: 3px 12px; border-radius: 999px; background: var(--fill); color: var(--on-fill); font-size: var(--t-caption); font-weight: 700; }
+
+.sec { padding-block: clamp(40px, 6vw, 72px); }
+.sec + .sec { border-top: 1px solid var(--line); }
+.sec .wrap { display: grid; gap: 20px; }
+.sec h2 { font-size: var(--t-h2); }
+
+/* 달라지는 점 */
+.table-wrap { overflow-x: auto; }
+.compare { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.compare th, .compare td { padding: 16px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: var(--t-desc); line-height: 1.65; }
+.compare thead th { padding-block: 10px; border-bottom: 2px solid var(--ink); font-size: var(--t-caption); font-weight: 700; color: var(--ink-soft); }
+.compare thead th:last-child { color: var(--accent); }
+.compare tbody th { font-weight: 400; color: var(--ink-soft); }
+.compare tbody td { font-weight: 700; color: var(--ink); }
+@media (max-width: 480px) { .compare th, .compare td { padding-inline: 8px; } }
+
+/* 카드 세 개 */
+.cards { list-style: none; padding: 0; display: grid; gap: 16px; }
+@media (min-width: 800px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cards li { display: grid; gap: 8px; align-content: start; min-width: 0; padding: 22px; border-radius: 16px; background: var(--bg-2) linear-gradient(180deg, var(--bg-2), var(--tint)); }
+.cards h3 { font-size: 1.125rem; }
+.cards p { font-size: var(--t-desc); color: var(--ink-soft); }
+
+/* 필요한 것 */
+.needs { list-style: none; padding: 0; display: grid; gap: 10px; }
+.needs li { display: grid; grid-template-columns: 12px minmax(0, 1fr); align-items: baseline; gap: 12px; font-size: 1.0625rem; font-weight: 700; }
+.needs li::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--accent); transform: translateY(-1px); }
+
+/* 묻고 답하기 */
+.qa { border-top: 2px solid var(--ink); }
+.qa details { border-bottom: 1px solid var(--line); }
+.qa summary {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
+  align-items: start;
+  gap: 12px;
+  min-height: 52px;
+  padding: 16px 4px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa .q { font-family: var(--font-en); font-weight: 600; color: var(--accent); }
+.qa summary::after { content: "+"; content: "+" / ""; justify-self: end; font-family: var(--font-en); font-size: 1.5rem; line-height: 1.1; color: var(--accent); }
+.qa details[open] summary::after { content: "−"; content: "−" / ""; }
+.qa .a { padding: 0 4px 20px calc(2rem + 16px); font-size: var(--t-desc); color: var(--ink-soft); }
+
+/* 참여 순서 */
+.steps { list-style: none; padding: 0; display: grid; gap: 28px; counter-reset: step; }
+@media (min-width: 800px) { .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.steps li::before { content: counter(step); font-family: var(--font-en); font-weight: 600; font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); line-height: 1; color: var(--accent); }
+.steps h3 { font-size: 1.125rem; }
+.steps p { font-size: var(--t-desc); color: var(--ink-soft); }
+.small-note { font-size: var(--t-small); color: var(--ink-soft); }
+
+/* 연락 */
+.contact-band { padding-block: clamp(36px, 5vw, 56px); background: var(--fill) linear-gradient(135deg, var(--fill), var(--fill-2)); color: var(--on-fill); }
+.contact-band .wrap { display: grid; gap: 10px; }
+.contact-band h2 { font-size: var(--t-h2); }
+.contact-band p { color: var(--on-fill); }
+.contact-band :focus-visible { outline-color: var(--on-fill); }
+.contact-band a { color: var(--on-fill); font-weight: 700; }
+.placeholder { display: inline-block; padding: 0 8px; border: 1.5px dashed currentColor; border-radius: 6px; font-weight: 700; }
+
+/* 시작한 이야기 */
+.chapters { list-style: none; padding: 0; display: grid; counter-reset: chapter; }
+.chapters li { counter-increment: chapter; display: grid; grid-template-columns: 4rem minmax(0, 1fr); column-gap: 20px; row-gap: 6px; padding-block: 24px; border-top: 1px solid var(--line); }
+.chapters li:first-child { padding-top: 0; border-top: 0; }
+.chapters li::before { content: counter(chapter, decimal-leading-zero); grid-row: 1 / span 2; font-family: var(--font-en); font-weight: 600; font-size: 2rem; line-height: 1.1; color: var(--accent); }
+.chapters h2 { grid-column: 2; font-size: 1.375rem; }
+.chapters p { grid-column: 2; max-width: 40rem; font-size: var(--t-desc); color: var(--ink-soft); }
+.signs { display: grid; gap: 28px; }
+.signs > div { display: grid; gap: 8px; align-content: start; min-width: 0; padding-top: 16px; border-top: 2px solid var(--ink); }
+.signs h2 { font-size: 1.25rem; }
+.signs p { max-width: 40rem; font-size: var(--t-desc); color: var(--ink-soft); }
+
+/* 바닥글 */
+.site-footer { padding-block: 48px 40px; background: var(--stage); color: var(--stage-ink); }
+.site-footer :focus-visible { outline-color: var(--stage-accent); }
+.foot { display: grid; gap: 28px; }
+@media (min-width: 900px) { .foot { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.2fr); } }
+.foot-brand { display: grid; gap: 10px; align-content: start; justify-items: start; }
+.site-footer { --logo-p: var(--logo-p-on-dark); }
+.lockup-foot { font-size: 1.625rem; }
+.foot-slogan { max-width: 22rem; font-size: var(--t-small); color: var(--stage-soft); }
+.foot-col { display: grid; gap: 6px; align-content: start; }
+.foot-col h2 { font-size: var(--t-desc); color: var(--stage-ink); }
+.foot-col p { font-size: var(--t-small); color: var(--stage-soft); }
+.foot .placeholder { color: var(--stage-accent); }
+.site-footer a { color: var(--stage-accent); }
+.copyright { grid-column: 1 / -1; font-size: var(--t-caption); color: var(--stage-soft); }
+/* ── 배경 결: 구역마다 옅은 모눈(수학 공책)과 빛 번짐을 깐다. 글자가 있는 쪽으로 갈수록 흐려지고,
+   고대비 설정·강제 색상·인쇄에서는 사라진다. 모두 CSS 그라디언트라 내려받는 그림은 없다 ── */
+.hero, .stage, .paths-sec, .page-head, .page-hero, .contact-band, .site-footer { position: relative; isolation: isolate; }
+.hero::before, .stage::before, .paths-sec::before, .page-head::before, .page-hero::before, .contact-band::before, .site-footer::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+}
+/* 밝은 첫 화면·대상별 페이지 머리: 오른쪽 위 빛 번짐 + 모눈, 왼쪽 아래 글자 쪽으로 사라짐 */
+.hero::before, .page-hero::before {
+  background-image:
+    radial-gradient(44rem 26rem at 92% -8%, var(--glow), transparent 62%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  -webkit-mask-image: radial-gradient(72rem 44rem at 100% 0%, #000 15%, transparent 70%);
+  mask-image: radial-gradient(72rem 44rem at 100% 0%, #000 15%, transparent 70%);
+}
+/* 어두운 무대: 모눈 칠판 — 왼쪽 위 보라 빛, 오른쪽 아래 금빛 기운, 옅은 분필 모눈 */
+.stage::before {
+  background-image:
+    radial-gradient(48rem 30rem at 8% -10%, var(--stage-glow), transparent 65%),
+    radial-gradient(34rem 22rem at 100% 110%, var(--stage-gold), transparent 60%),
+    linear-gradient(var(--stage-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid) 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px, 28px 28px;
+}
+/* 어떤 분이세요?: 왼쪽 아래 빛 번짐만 */
+.paths-sec::before { background-image: radial-gradient(40rem 22rem at 0% 110%, var(--glow), transparent 65%); }
+/* 사업 소개·회사 소개·함께하기 머리: 띠에서 종이색으로 내려가며 오른쪽 위에 모눈 */
+.page-head::before {
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(64rem 32rem at 100% 0%, #000 10%, transparent 70%);
+  mask-image: radial-gradient(64rem 32rem at 100% 0%, #000 10%, transparent 70%);
+}
+/* 연락 띠: 사선 그라디언트 위에 오른쪽으로 갈수록 또렷해지는 점 */
+.contact-band::before {
+  background-image: radial-gradient(circle at 1.5px 1.5px, var(--dots) 1.5px, transparent 2.2px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(44rem 22rem at 100% 50%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(44rem 22rem at 100% 50%, #000 0%, transparent 70%);
+}
+/* 바닥글: 왼쪽 아래 보라 빛, 오른쪽 위 금빛 기운 */
+.site-footer::before {
+  background-image:
+    radial-gradient(44rem 24rem at 0% 110%, var(--stage-glow), transparent 65%),
+    radial-gradient(30rem 18rem at 100% -10%, var(--stage-gold), transparent 60%);
+}
+@media (prefers-contrast: more), (forced-colors: active), print {
+  .h1-grad { background: none; color: var(--ink); -webkit-text-fill-color: currentColor; }
+  .hero::before, .stage::before, .paths-sec::before, .page-head::before, .page-hero::before, .contact-band::before, .site-footer::before { display: none; }
+  .page-head { background: var(--band); }
+  .contact-band { background: var(--fill); }
+  .cards li { background: var(--bg-2); }
+  .caption-card { background: var(--stage-raise); }
+  .path, .steps4 li { background: var(--bg-2); }
+  .head-mark { display: none; }
+}
+/* 강제 색상(윈도우 고대비)에서는 그라디언트 글자를 시스템 글자색으로 */
+@media (forced-colors: active) { .h1-grad { color: CanvasText; -webkit-text-fill-color: CanvasText; } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="#home" aria-label="퍼플아이 홈" data-nav="home">
+      <span class="lockup" lang="en"><svg class="pe-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg><svg class="wordmark lockup-word" viewBox="75 -740 5005 1002" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5M807 -492L807 -244A193 193 0 0 0 1193 -244M1193 -492L1193 -59M1461 -492L1461 -59M1461 -340A161 161 0 0 1 1622 -501M1845 -492L1845 203M1845 -275.5A223.5 225.5 0 0 0 2180.2 -80.2A223.5 225.5 0 0 0 2180.2 -470.8A223.5 225.5 0 0 0 1845 -275.5M2521 -681L2521 -59M3172.7 -300A212.5 225.5 0 0 0 2761 -350.3A212.5 225.5 0 0 0 3111.8 -116M2750.3 -300L3172.7 -300"></path><path class="rl-e" d="M3795.7 -300A212.5 225.5 0 0 0 3384 -350.3A212.5 225.5 0 0 0 3734.8 -116M3373.3 -300L3795.7 -300M4406 -492L4057 200M3989 -492L4187.6 -59M5019.7 -300A212.5 225.5 0 0 0 4608 -350.3A212.5 225.5 0 0 0 4958.8 -116M4597.3 -300L5019.7 -300"></path></svg></span>
+    </a>
+    <nav aria-label="주요 메뉴">
+      <ul class="nav" role="list">
+        <li><a href="#business" data-nav="business">사업 소개</a></li>
+        <li><a href="#company" data-nav="company">회사 소개</a></li>
+        <li><a href="#story" data-nav="story">시작한 이야기</a></li>
+        <li><a class="nav-cta" href="#join" data-nav="join">함께하기</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ───────── 첫 화면 ───────── -->
+  <div class="view" id="home">
+    <section class="hero" aria-labelledby="home-title">
+      <div class="wrap">
+        <div class="hero-head">
+          <p class="eyebrow" lang="en"><span class="nowrap">See differently,</span> <span class="nowrap">learn equally</span></p>
+          <h1 id="home-title" tabindex="-1"><span class="h1-line h1-lead">세상을 바라보는 방식이 다를&nbsp;뿐,</span> <span class="h1-line h1-grad">누구나 동등한 배움의 기회와 꿈을 가질&nbsp;수 있어야 합니다.</span></h1>
+          <p class="hero-desc">칠판에만 있는 강의 내용을 AI가 제때 말로 설명해, 시각장애 학생도 일반 인터넷 강의로 공부할 수 있게 합니다.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#business">사업 소개 보기</a>
+            <a class="btn btn-ghost" href="#join">함께하기</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="stage" aria-labelledby="stage-title">
+      <div class="wrap stage-grid">
+        <div class="stage-copy">
+          <p class="kicker">소리로만 들어 보세요</p>
+          <h2 id="stage-title" class="stage-title">칠판이 보이지 않으면, 인강은 이렇게 들립니다</h2>
+          <p class="stage-desc">원본은 강사 목소리만 나옵니다. 해설본에는 칠판에만 있던 내용을 퍼플아이가 말로 더합니다. 예시는 나눗셈과 세 자리 수의 덧셈 두 가지입니다.</p>
+          <div class="player" role="group" aria-label="예시 듣기">
+            <button type="button" id="play-original" class="btn btn-line">원본 듣기</button>
+            <button type="button" id="play-described" class="btn btn-solid">해설본 듣기</button>
+            <button type="button" id="stop-audio" class="btn btn-quiet" disabled>멈추기</button>
+          </div>
+          <p id="player-status" class="player-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="scenes" role="region" aria-label="예시 장면 두 가지">
+          <div class="scene-track" id="scene-track" tabindex="-1">
+            <figure class="caption-card scene" id="scene-0" aria-labelledby="scene-label-0">
+              <p id="scene-label-0" class="scene-label">예시 1 · 초등 3학년 수학 ‘나눗셈’</p>
+              <div class="scene-pic">
+                <div class="dots" role="img" aria-label="칠판 그림. 동그라미 12개가 4개씩 세 묶음으로 묶여 있습니다.">
+                  <span class="grp"><i></i><i></i><i></i><i></i></span>
+                  <span class="grp"><i></i><i></i><i></i><i></i></span>
+                  <span class="grp"><i></i><i></i><i></i><i></i></span>
+                </div>
+              </div>
+              <div class="caption" aria-hidden="true">
+                <span class="cap-who">강사</span>
+                <p class="cap-line">“자, 사탕을 세 친구에게 똑같이 나눠 줄 거예요.”</p>
+              </div>
+            </figure>
+            <figure class="caption-card scene" id="scene-1" aria-labelledby="scene-label-1">
+              <p id="scene-label-1" class="scene-label">예시 2 · 초등 3학년 수학 ‘세 자리 수의 덧셈’</p>
+              <div class="scene-pic">
+                <div class="sum" role="img" aria-label="칠판 그림. 256 더하기 178 세로셈이 있고, 일의 자리 아래에 4가, 십의 자리 위에 받아올림한 1이 적혀 있습니다.">
+                  <span class="cell carry c10 r1">1</span>
+                  <span class="cell c100 r2">2</span><span class="cell c10 r2">5</span><span class="cell c1 r2">6</span>
+                  <span class="cell op r3">+</span><span class="cell c100 r3">1</span><span class="cell c10 r3">7</span><span class="cell c1 r3">8</span>
+                  <span class="rule"></span>
+                  <span class="cell ans c1 r5">4</span>
+                  <span class="ring"></span>
+                </div>
+              </div>
+              <div class="caption" aria-hidden="true">
+                <span class="cap-who">강사</span>
+                <p class="cap-line">“자, 이번엔 이 문제를 풀어 볼게요.”</p>
+              </div>
+            </figure>
+          </div>
+          <div class="scene-dots" role="group" aria-label="예시 고르기">
+            <button type="button" class="scene-dot" data-scene="0" aria-controls="scene-0" aria-current="true"><span class="sr-only">예시 1: 나눗셈</span></button>
+            <button type="button" class="scene-dot" data-scene="1" aria-controls="scene-1"><span class="sr-only">예시 2: 세 자리 수의 덧셈</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <details class="transcript" id="transcript">
+          <summary>들리는 내용 글로 보기</summary>
+          <h3 class="lines-title" data-scene="0">예시 1 · 나눗셈</h3>
+          <ol class="lines" role="list" data-scene="0">
+            <li data-row="0"><span class="who">강사</span>“자, 사탕을 세 친구에게 똑같이 나눠 줄 거예요.”</li>
+            <li data-row="1"><span class="who who-n">퍼플아이 해설 · 강사가 말하지 않는 틈에</span>“칠판에 사탕을 뜻하는 동그라미 12개가 그려져 있습니다.”</li>
+            <li data-row="2"><span class="who">강사</span>“이렇게, 이렇게, 이렇게 묶어 보면, 한 친구에게 몇 개씩일까요?”</li>
+            <li data-row="3"><span class="who who-n">퍼플아이 해설 · 강의를 잠시 멈추고</span>“동그라미 12개를 4개씩 묶어 세 묶음으로 나눴습니다.”</li>
+            <li data-row="4"><span class="who">강사</span>“맞아요, 네 개씩이에요. 그래서 12 나누기 3은 4예요.”</li>
+          </ol>
+          <h3 class="lines-title" data-scene="1">예시 2 · 세 자리 수의 덧셈</h3>
+          <ol class="lines" role="list" data-scene="1">
+            <li data-row="0"><span class="who">강사</span>“자, 이번엔 이 문제를 풀어 볼게요.”</li>
+            <li data-row="1"><span class="who who-n">퍼플아이 해설 · 강사가 말하지 않는 틈에</span>“칠판에 세로셈이 있습니다. 위에 256, 아래에 178, 더하기입니다.”</li>
+            <li data-row="2"><span class="who">강사</span>“일의 자리부터 더하면 이렇게 되죠? 여기에 이거 쓰고, 하나는 여기로 올려 주고요.”</li>
+            <li data-row="3"><span class="who who-n">퍼플아이 해설 · 강의를 잠시 멈추고</span>“일의 자리 6과 8을 더하면 14입니다. 4를 일의 자리 아래에 쓰고, 1은 십의 자리 위에 작게 올려 적었습니다.”</li>
+            <li data-row="4"><span class="who">강사</span>“그럼 십의 자리도 똑같이 해 볼까요?”</li>
+          </ol>
+          <p class="note">설명을 위해 만든 예시이며, 소리는 지금 쓰는 기기의 음성으로 읽습니다.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="steps-sec" aria-labelledby="steps-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="sec-label">어떻게 동작하나요</p>
+          <h2 id="steps-title">칠판을 말로 옮기는 네 단계</h2>
+        </div>
+        <ol class="steps4" role="list">
+          <li><h3><span class="num" aria-hidden="true">01</span>찾기</h3><p>강의 영상을 미리 보고, 판서가 끝나거나 화면이 바뀌는 지점을 찾습니다.</p></li>
+          <li><h3><span class="num" aria-hidden="true">02</span>설명 쓰기</h3><p>그 순간의 칠판을 읽고, 단원별로 학습한 해설 규칙에 따라 해설을 씁니다. 수식은 같은 규칙에 맞춰 뜻까지 풀어서 말합니다.</p></li>
+          <li><h3><span class="num" aria-hidden="true">03</span>검수</h3><p>사람이 확인한 뒤에 내보냅니다.</p></li>
+          <li><h3><span class="num" aria-hidden="true">04</span>끼워 넣기</h3><p>강사 목소리가 비는 틈에 넣고, 틈이 없으면 강의를 잠시 멈춥니다.</p></li>
+        </ol>
+        <p class="more"><a href="#how">사업 소개에서 자세히 보기<span aria-hidden="true">&nbsp;→</span></a></p>
+      </div>
+    </section>
+
+    <section class="paths-sec" aria-labelledby="who-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="sec-label">누구에게 필요한가요</p>
+          <h2 id="who-title">어떤 분이세요?</h2>
+        </div>
+        <ul class="paths" role="list">
+          <li><a class="path" href="#family"><span class="path-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="7" rx="1.5"/><rect x="17" y="13" width="4" height="7" rx="1.5"/></svg></span><span class="path-title">학생·부모님</span><span class="path-desc">인터넷 강의를 같은 진도로 듣고 싶은 시각장애 학생과 가족</span></a></li>
+          <li><a class="path" href="#teacher"><span class="path-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 9h7M7 12h4"/></svg></span><span class="path-title">특수교사·복지관 선생님</span><span class="path-desc">학생이 어디서 막히는지 가장 잘 아는 분</span></a></li>
+          <li><a class="path" href="#creator"><span class="path-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg></span><span class="path-title">강의하는 분</span><span class="path-desc">강의를 시각장애 학생에게도 들려주고 싶은 분</span></a></li>
+        </ul>
+        <p class="story-link"><a href="#story">퍼플아이가 시작된 이야기<span aria-hidden="true">&nbsp;→</span></a></p>
+      </div>
+    </section>
+
+    <section class="contact-band cta-band" aria-labelledby="cta-title">
+      <div class="wrap">
+        <p class="sec-label">지금 단계</p>
+        <h2 id="cta-title">초등 3학년 수학 강의로 첫 시연을 준비하는 중입니다</h2>
+        <p>특수교사, 학부모, 수학 강의를 만드는 선생님의 이야기를 듣고 있습니다. 해당하시면 편하게 연락 주세요.</p>
+        <div class="actions">
+          <a class="btn btn-onfill" href="#join">함께하기</a>
+          <a class="btn btn-onfill-ghost" href="#story">시작한 이야기</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 사업 소개 ───────── -->
+  <div class="view" id="business">
+    <header class="page-head">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 tabindex="-1">사업 소개</h1>
+        <p class="page-desc">시각장애 학생도 일반 인터넷 강의로 공부할 수 있게 만드는 AI 화면해설 서비스입니다.</p>
+      </div>
+    </header>
+
+    <section class="block" id="problem" aria-labelledby="problem-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="problem-title">해결하려는 문제</h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>중요한 정보는 칠판에만 있습니다</h3>
+              <p>강사가 “이 값을 이렇게 넘기면”이라고 말할 때, 무엇을 어디로 넘기는지는 칠판에만 있습니다.</p>
+            </li>
+            <li class="item">
+              <h3>소리만으로는 따라가기 어렵습니다</h3>
+              <p>그 정보 없이 듣다 보면 중간에 놓치고, 결국 인강을, 공부를 그만두게 됩니다.</p>
+            </li>
+            <li class="item">
+              <h3>대체 교재는 늦게 옵니다</h3>
+              <p>점역할 사람이 부족해 몇 달씩 걸리고, 시험이 끝난 뒤에야 교재를 받은 학생도 있습니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="block-head">
+          <h2 id="how-title">작동 방식</h2>
+          <p class="block-desc">학생은 이미 강사 목소리를 듣고 있어서, 해설이 끼어드는 시점을 잘 골라야 합니다.</p>
+        </div>
+        <div class="block-body">
+          <ol class="items numbered" role="list">
+            <li class="item">
+              <h3>찾기</h3>
+              <p>강의 영상을 미리 분석해, 판서가 끝나거나 화면이 바뀌는 지점을 찾습니다.</p>
+            </li>
+            <li class="item">
+              <h3>설명 쓰기</h3>
+              <p>그 순간의 칠판을 읽고, 단원별로 학습한 해설 규칙에 따라 해설을 씁니다. 수식은 같은 규칙에 맞춰 무슨 뜻인지까지 풀어서 말합니다.</p>
+            </li>
+            <li class="item">
+              <h3>검수</h3>
+              <p>사람이 확인한 뒤에 내보냅니다.</p>
+            </li>
+            <li class="item">
+              <h3>끼워 넣기</h3>
+              <p>강사 목소리가 비는 틈에 설명을 넣고, 틈이 없으면 강의를 잠시 멈춘 뒤 설명합니다.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="listen" aria-labelledby="listen-title">
+      <div class="wrap">
+        <div class="block-head">
+          <h2 id="listen-title">예시로 들어 보기</h2>
+          <p class="block-desc">같은 장면을 원본과 해설본으로 비교해 보세요. 대본은 설명을 위한 예시이고, 소리는 지금 쓰는 기기의 음성으로 읽습니다.</p>
+        </div>
+        <div class="block-body">
+          <div class="player" role="group" aria-label="예시 듣기">
+            <button type="button" id="biz-play-original" class="btn btn-ghost">원본 듣기</button>
+            <button type="button" id="biz-play-described" class="btn btn-primary">해설본 듣기</button>
+            <button type="button" id="biz-stop-audio" class="btn btn-quiet" disabled>멈추기</button>
+            <p id="biz-player-status" class="player-status" role="status" aria-live="polite"></p>
+          </div>
+          <p class="player-tip">화면낭독 프로그램을 쓰신다면, 재생하는 동안 낭독을 잠시 멈추면 소리가 겹치지 않습니다.</p>
+
+          <figure class="tracks-fig">
+            <div class="tracks" aria-hidden="true">
+              <span class="lane-label">강사</span>
+              <div class="lane">
+                <span class="seg t s-a"></span>
+                <span class="seg t s-b"></span>
+                <span class="seg pause s-c"></span>
+                <span class="seg t s-d"></span>
+              </div>
+              <span class="lane-label">해설</span>
+              <div class="lane">
+                <span class="seg n s-n1"></span>
+                <span class="seg n s-n2"></span>
+              </div>
+              <div class="ticks"><span class="k0">0초</span><span class="k5">5초</span><span class="k10">10초</span><span class="k15">15초</span><span class="k20">20초</span></div>
+            </div>
+            <figcaption>
+              <ul class="legend" aria-hidden="true">
+                <li><span class="key key-t"></span>강사 음성</li>
+                <li><span class="key key-n"></span>퍼플아이 해설</li>
+                <li><span class="key key-p"></span>강의 잠시 멈춤</li>
+              </ul>
+              <span>해설본 21초의 시간 배치입니다. 첫 번째 해설은 강사가 말하지 않는 틈에 들어가고, 두 번째 해설은 틈이 짧아 강의를 5초 멈춘 뒤 들려줍니다.</span>
+            </figcaption>
+          </figure>
+
+          <div class="table-wrap">
+            <table class="script">
+              <caption>예시 해설 대본 · 초등 3학년 ‘세 자리 수의 덧셈’</caption>
+              <colgroup><col class="c-tc"><col><col></colgroup>
+              <thead>
+                <tr><th scope="col">원본 시각</th><th scope="col">강사 음성</th><th scope="col">퍼플아이 해설</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="tc">00:00</td>
+                  <td>“자, 이번엔 이 문제를 풀어 볼게요.”</td>
+                  <td class="empty"><span aria-hidden="true">—</span><span class="sr-only">해설 없음</span></td>
+                </tr>
+                <tr>
+                  <td class="tc">00:03</td>
+                  <td class="muted">(판서 중, 말 없음)</td>
+                  <td><span class="chip">말 없는 틈에</span>“칠판에 세로셈이 있습니다. 위에 256, 아래에 178, 더하기입니다.”</td>
+                </tr>
+                <tr>
+                  <td class="tc">00:08</td>
+                  <td>“일의 자리부터 더하면 이렇게 되죠? 여기에 이거 쓰고, 하나는 여기로 올려 주고요.”</td>
+                  <td class="empty"><span aria-hidden="true">—</span><span class="sr-only">해설 없음</span></td>
+                </tr>
+                <tr>
+                  <td class="tc">00:13</td>
+                  <td class="muted">(강의 잠시 멈춤)</td>
+                  <td><span class="chip">강의를 멈추고</span>“일의 자리 6과 8을 더하면 14입니다. 4를 일의 자리 아래에 쓰고, 1은 십의 자리 위에 작게 올려 적었습니다.”</td>
+                </tr>
+                <tr>
+                  <td class="tc">00:13</td>
+                  <td>“그럼 십의 자리도 똑같이 해 볼까요?”</td>
+                  <td class="empty"><span aria-hidden="true">—</span><span class="sr-only">해설 없음</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">실제 강의로 만든 비교 음성은 준비 중입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="scope" aria-labelledby="scope-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="scope-title">범위와 계획</h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>수학 한 과목부터</h3>
+              <p>초등 3학년부터 중학교 3학년까지, 수학 강의를 한 학년씩 빠짐없이 채웁니다.</p>
+            </li>
+            <li class="item">
+              <h3>지금 단계</h3>
+              <p>초등 3학년 강의로 첫 시연을 준비하고 있습니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 회사 소개 ───────── -->
+  <div class="view" id="company">
+    <header class="page-head">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 tabindex="-1">회사 소개</h1>
+        <p class="page-desc">퍼플아이는 세상을 다르게 보는 아이들이 환경 탓에 공부를 포기하지 않도록, 친구들과 같은 인터넷 강의로 공부할 수 있게 만드는 회사입니다.</p>
+      </div>
+    </header>
+
+    <section class="block" id="meaning" aria-labelledby="meaning-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="meaning-title"><svg class="wordmark" viewBox="75 -740 5005 1002" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5M807 -492L807 -244A193 193 0 0 0 1193 -244M1193 -492L1193 -59M1461 -492L1461 -59M1461 -340A161 161 0 0 1 1622 -501M1845 -492L1845 203M1845 -275.5A223.5 225.5 0 0 0 2180.2 -80.2A223.5 225.5 0 0 0 2180.2 -470.8A223.5 225.5 0 0 0 1845 -275.5M2521 -681L2521 -59M3172.7 -300A212.5 225.5 0 0 0 2761 -350.3A212.5 225.5 0 0 0 3111.8 -116M2750.3 -300L3172.7 -300"></path><path class="rl-e" d="M3795.7 -300A212.5 225.5 0 0 0 3384 -350.3A212.5 225.5 0 0 0 3734.8 -116M3373.3 -300L3795.7 -300M4406 -492L4057 200M3989 -492L4187.6 -59M5019.7 -300A212.5 225.5 0 0 0 4608 -350.3A212.5 225.5 0 0 0 4958.8 -116M4597.3 -300L5019.7 -300"></path></svg><span class="sr-only">퍼플아이</span> <span class="nowrap">이름에 담은 뜻</span></h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>퍼플</h3>
+              <p>누런 소 떼 속에 보랏빛 소가 있으면 누구나 한 번 더 보게 됩니다. 퍼플아이의 보라는 남과 다른 점을 그 사람만의 색으로 봅니다.</p>
+            </li>
+            <li class="item">
+              <h3>아이</h3>
+              <p>세상을 보는 방법은 사람마다 다릅니다. 눈으로 보는 사람도 있고, 손끝이나 소리로 보는 사람도 있습니다. 그래서 장애와 비장애로 사람을 나누지 않습니다.</p>
+            </li>
+            <li class="item">
+              <h3>퍼플아이</h3>
+              <p>어떤 눈으로 세상을 보든, 배울 기회는 같아야 합니다. 퍼플아이는 누구나 같은 강의로 공부할 수 있게 만듭니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="values" aria-labelledby="values-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="values-title">우리가 지키는 것</h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>현장이 정합니다</h3>
+              <p>무엇을 만들지는 특수교사, 학부모, 학생에게 듣고 정합니다.</p>
+            </li>
+            <li class="item">
+              <h3>틀리지 않는 것이 먼저입니다</h3>
+              <p>틀린 수식 설명은 학생에게 피해가 되기 때문에, 모든 해설은 사람이 검수합니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 함께하기 ───────── -->
+  <div class="view" id="join">
+    <header class="page-head">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 tabindex="-1">함께하기</h1>
+        <p class="page-desc">첫 시연을 앞두고 선생님, 학생, 부모님의 이야기를 듣고 있습니다. 아래에 해당하시면 편하게 연락 주세요.</p>
+      </div>
+    </header>
+
+    <section class="block" id="partners" aria-labelledby="partners-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="partners-title">이런 분을 찾습니다</h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>특수교사·복지관 선생님</h3>
+              <p>학생들이 수학의 어디에서 막히는지 들려주세요. 들려주신 이야기로 무엇을 만들지 정합니다.</p>
+            </li>
+            <li class="item">
+              <h3>시각장애 학생과 부모님</h3>
+              <p>같은 강의의 원본과 해설본을 들어 보고, 어느 쪽이 더 이해되는지 알려 주세요.</p>
+            </li>
+            <li class="item">
+              <h3>수학 강의를 만드는 선생님</h3>
+              <p>선생님의 강의에 해설을 입혀 시각장애 학생에게 전하고 싶습니다. 처음에는 무료 시범으로 해 봅니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="contact" aria-labelledby="contact-title">
+      <div class="wrap">
+        <div class="block-head"><h2 id="contact-title">연락처</h2></div>
+        <div class="block-body">
+          <ul class="items" role="list">
+            <li class="item">
+              <h3>이메일</h3>
+              <p class="contact-line">김정훈 · <a href="mailto:whoshoony@naver.com">whoshoony@naver.com</a></p>
+              <p>인터뷰, 자문, 강의 협력 문의를 모두 메일로 받습니다.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 학생·부모님 ───────── -->
+  <div class="view" id="family">
+    <section class="page-hero" aria-labelledby="family-title">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 id="family-title" tabindex="-1">학생과 부모님께</h1>
+        <p class="page-lead">다른 친구들이 듣는 인터넷 강의를, 같은 진도로 들을 수 있게 만들고 있습니다.</p>
+        <p class="badge">지금은 첫 시연을 준비하는 단계입니다</p>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="family-diff">
+      <div class="wrap">
+        <h2 id="family-diff">달라지는 점</h2>
+        <div class="table-wrap">
+          <table class="compare">
+            <caption class="sr-only">지금 겪는 어려움과 퍼플아이가 하려는 것 비교</caption>
+            <thead><tr><th scope="col">지금</th><th scope="col">퍼플아이가 하려는 것</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">강사가 “여기, 이렇게”라고 하면 무엇을 말하는지 알기 어렵습니다.</th><td>칠판에 적힌 식과 그림을 해설이 말로 알려 줍니다.</td></tr>
+              <tr><th scope="row">점자 교재를 몇 달씩 기다리기도 합니다.</th><td>이미 있는 인터넷 강의로 공부할 수 있게 합니다.</td></tr>
+              <tr><th scope="row">소리만으로 따라가기 어려워 강의를 포기하게 됩니다.</th><td>강사 목소리와 겹치지 않게, 필요한 순간에 설명합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="family-qa">
+      <div class="wrap">
+        <h2 id="family-qa">묻고 답하기</h2>
+        <div class="qa">
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>언제부터 쓸 수 있나요?</span></summary>
+            <p class="a">아직은 쓸 수 없습니다. 초등 3학년 수학 강의로 먼저 시연해 보고, 결과를 보며 열겠습니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>어떤 과목부터 하나요?</span></summary>
+            <p class="a">수학부터 시작합니다. 초등 3학년부터 중학교 3학년까지 차례로 채울 계획입니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>해설이 틀리면 어떡하나요?</span></summary>
+            <p class="a">모든 해설은 사람이 검수한 뒤에 내보냅니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>강의 소리와 해설이 겹치지 않나요?</span></summary>
+            <p class="a">강사가 말하지 않는 틈에 해설을 넣고, 틈이 없으면 강의를 잠시 멈춘 뒤 설명합니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>비용이 드나요?</span></summary>
+            <p class="a">시범 참여에는 비용이 들지 않습니다. 정식 서비스의 이용 방법은 정해지는 대로 알려 드리겠습니다.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="family-steps">
+      <div class="wrap">
+        <h2 id="family-steps">참여하는 방법</h2>
+        <ol class="steps" role="list">
+          <li><h3>연락 주세요</h3><p>보호자께서 아래 이메일로 연락 주세요.</p></li>
+          <li><h3>두 가지로 들어 봅니다</h3><p>같은 강의를 원본 한 번, 해설본 한 번 들어 봅니다.</p></li>
+          <li><h3>느낌을 알려 주세요</h3><p>어느 쪽이 더 이해됐는지 짧은 설문으로 알려 주세요.</p></li>
+        </ol>
+        <p class="small-note">학생이 참여할 때는 보호자 동의를 먼저 받습니다.</p>
+      </div>
+    </section>
+
+    <section class="contact-band" aria-labelledby="family-contact">
+      <div class="wrap">
+        <h2 id="family-contact">연락 주세요</h2>
+        <p>김정훈 · <a href="mailto:whoshoony@naver.com">whoshoony@naver.com</a></p>
+        <p>연락 주시면 참여 방법을 안내해 드립니다.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 특수교사·복지관 ───────── -->
+  <div class="view" id="teacher">
+    <section class="page-hero" aria-labelledby="teacher-title">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 id="teacher-title" tabindex="-1">특수교사·복지관 선생님께</h1>
+        <p class="page-lead">학생이 어디서 막히는지는 선생님이 가장 잘 아십니다. 그 이야기를 듣고 만들겠습니다.</p>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="teacher-help">
+      <div class="wrap">
+        <h2 id="teacher-help">이런 도움을 청합니다</h2>
+        <ul class="cards" role="list">
+          <li><h3>인터뷰</h3><p>학생들이 수학의 어디에서 처음 막히는지, 지금 어떤 자료로 가르치시는지 들려주세요.</p></li>
+          <li><h3>비교 듣기와 설문</h3><p>원본과 해설본을 학생들과 들어 보고, 학생들이 어느 쪽을 더 잘 따라오는지 봐 주세요.</p></li>
+          <li><h3>해설 검토</h3><p>해설 문장이 학생에게 맞는지 읽어 보고 의견을 주세요.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="teacher-qa">
+      <div class="wrap">
+        <h2 id="teacher-qa">묻고 답하기</h2>
+        <div class="qa">
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>어떤 강의로 시연하나요?</span></summary>
+            <p class="a">초등 3학년 수학 강의로 준비하고 있습니다. 정식 서비스에서는 강의를 만든 분께 허락받은 강의만 씁니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>점자 교재를 대신하나요?</span></summary>
+            <p class="a">아니요. 점자 교재로 공부하면서 인터넷 강의도 함께 들을 수 있게 하려는 것입니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>학생 정보는 어떻게 다루나요?</span></summary>
+            <p class="a">인터뷰와 설문에 필요한 정보만 받고, 학생이 참여할 때는 보호자 동의를 먼저 받습니다.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-band" aria-labelledby="teacher-contact">
+      <div class="wrap">
+        <h2 id="teacher-contact">연락 주세요</h2>
+        <p>김정훈 · <a href="mailto:whoshoony@naver.com">whoshoony@naver.com</a></p>
+        <p>인터뷰나 시연을 도와주실 수 있다면 메일 주세요.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 강의하는 분 ───────── -->
+  <div class="view" id="creator">
+    <section class="page-hero" aria-labelledby="creator-title">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 id="creator-title" tabindex="-1">강의하는 분께</h1>
+        <p class="page-lead">선생님의 강의를 시각장애 학생도 들을 수 있게, 해설을 입히고 싶습니다.</p>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="creator-how">
+      <div class="wrap">
+        <h2 id="creator-how">진행 방식</h2>
+        <ul class="cards" role="list">
+          <li><h3>영상은 그대로</h3><p>강의 영상은 고치지 않습니다. 해설은 따로 만들어 강의와 함께 들려줍니다.</p></li>
+          <li><h3>사람이 검수</h3><p>AI가 만든 해설을 사람이 확인한 뒤에 내보냅니다.</p></li>
+          <li><h3>무료 시범부터</h3><p>독점 계약 없이 먼저 시범으로 해 봅니다.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="creator-needs">
+      <div class="wrap">
+        <h2 id="creator-needs">필요한 것</h2>
+        <ul class="needs" role="list">
+          <li>강의 원본 영상 파일</li>
+          <li>해설을 붙여 시각장애 학생에게 전해도 된다는 허락</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="creator-qa">
+      <div class="wrap">
+        <h2 id="creator-qa">묻고 답하기</h2>
+        <div class="qa">
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>유튜브에 올린 강의도 되나요?</span></summary>
+            <p class="a">됩니다. 다만 유튜브에서 영상을 내려받지 않고, 선생님께 원본 파일을 직접 받아 씁니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>비용이 드나요?</span></summary>
+            <p class="a">시범 협력은 무상으로 진행합니다.</p>
+          </details>
+          <details>
+            <summary><span class="q" aria-hidden="true">Q</span><span>만든 해설은 어디에 쓰이나요?</span></summary>
+            <p class="a">시각장애 학생에게 강의를 전하는 데 씁니다. 자세한 조건은 상의해서 정합니다.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-band" aria-labelledby="creator-contact">
+      <div class="wrap">
+        <h2 id="creator-contact">연락 주세요</h2>
+        <p>김정훈 · <a href="mailto:whoshoony@naver.com">whoshoony@naver.com</a></p>
+        <p>강의 협력이 궁금하시면 편하게 메일 주세요.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────── 시작한 이야기 ───────── -->
+  <div class="view" id="story">
+    <section class="page-hero" aria-labelledby="story-title">
+      <svg class="head-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg>
+      <div class="wrap">
+        <h1 id="story-title" tabindex="-1">시작한 이야기</h1>
+        <p class="page-lead">한 학생의 말에서 시작했습니다.</p>
+      </div>
+    </section>
+
+    <section class="sec" aria-label="이야기">
+      <div class="wrap">
+        <ol class="chapters" role="list">
+          <li>
+            <h2>한 학생의 말</h2>
+            <p>시각장애 학생과 일반 학생이 공부 방법을 이야기하는 영상을 봤습니다. 시각장애 학생은 학습 자료가 흩어져 있고, 점역할 사람이 부족해 몇 달씩 걸리며, 시험이 끝난 뒤에 책을 받은 적도 있다고 했습니다.</p>
+          </li>
+          <li>
+            <h2>처음 생각</h2>
+            <p>흩어진 대체 자료를 한곳에 모으고 점역사를 이어 주는 서비스를 떠올렸습니다.</p>
+          </li>
+          <li>
+            <h2>다시 본 문제</h2>
+            <p>자료를 잘 모아도 있는 자료의 양 자체가 적었습니다. 자료가 흩어진 것보다 자료가 모자란 것이 더 큰 문제였습니다.</p>
+          </li>
+          <li>
+            <h2>바꾼 질문</h2>
+            <p>새 자료를 만드는 대신, 일반 학생들이 이미 보는 인터넷 강의를 시각장애 학생도 들을 수 있게 하면 어떨까 생각했습니다.</p>
+          </li>
+          <li>
+            <h2>지금</h2>
+            <p>실제 강의 영상으로 시험해 동작을 확인했고, 초등 3학년 수학 강의로 첫 시연을 준비하고 있습니다.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="story-name">
+      <div class="wrap">
+        <div class="signs">
+          <div>
+            <h2 id="story-name"><svg class="wordmark" viewBox="75 -740 5005 1002" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5M807 -492L807 -244A193 193 0 0 0 1193 -244M1193 -492L1193 -59M1461 -492L1461 -59M1461 -340A161 161 0 0 1 1622 -501M1845 -492L1845 203M1845 -275.5A223.5 225.5 0 0 0 2180.2 -80.2A223.5 225.5 0 0 0 2180.2 -470.8A223.5 225.5 0 0 0 1845 -275.5M2521 -681L2521 -59M3172.7 -300A212.5 225.5 0 0 0 2761 -350.3A212.5 225.5 0 0 0 3111.8 -116M2750.3 -300L3172.7 -300"></path><path class="rl-e" d="M3795.7 -300A212.5 225.5 0 0 0 3384 -350.3A212.5 225.5 0 0 0 3734.8 -116M3373.3 -300L3795.7 -300M4406 -492L4057 200M3989 -492L4187.6 -59M5019.7 -300A212.5 225.5 0 0 0 4608 -350.3A212.5 225.5 0 0 0 4958.8 -116M4597.3 -300L5019.7 -300"></path></svg><span class="sr-only">퍼플아이</span> <span class="nowrap">이름에 담은 뜻</span></h2>
+            <p>퍼플아이는 ‘남다른 눈’이라는 뜻입니다. 어떤 눈으로 세상을 보든 배울 기회는 같아야 한다는 생각으로 지었습니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap foot">
+    <div class="foot-brand">
+      <p class="lockup lockup-foot"><svg class="pe-mark" viewBox="75 -560 657 995" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5"></path><path class="rl-e" d="M671.7 126A212.5 225.5 0 0 0 260 75.7A212.5 225.5 0 0 0 610.8 310M249.3 126L671.7 126"></path></svg><span lang="en" aria-hidden="true"><svg class="wordmark lockup-word" viewBox="75 -740 5005 1002" fill="none" stroke-width="118" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path class="rl-p" d="M134 -492L134 203M134 -275.5A223.5 225.5 0 0 0 469.2 -80.2A223.5 225.5 0 0 0 469.2 -470.8A223.5 225.5 0 0 0 134 -275.5M807 -492L807 -244A193 193 0 0 0 1193 -244M1193 -492L1193 -59M1461 -492L1461 -59M1461 -340A161 161 0 0 1 1622 -501M1845 -492L1845 203M1845 -275.5A223.5 225.5 0 0 0 2180.2 -80.2A223.5 225.5 0 0 0 2180.2 -470.8A223.5 225.5 0 0 0 1845 -275.5M2521 -681L2521 -59M3172.7 -300A212.5 225.5 0 0 0 2761 -350.3A212.5 225.5 0 0 0 3111.8 -116M2750.3 -300L3172.7 -300"></path><path class="rl-e" d="M3795.7 -300A212.5 225.5 0 0 0 3384 -350.3A212.5 225.5 0 0 0 3734.8 -116M3373.3 -300L3795.7 -300M4406 -492L4057 200M3989 -492L4187.6 -59M5019.7 -300A212.5 225.5 0 0 0 4608 -350.3A212.5 225.5 0 0 0 4958.8 -116M4597.3 -300L5019.7 -300"></path></svg></span><span class="sr-only">퍼플아이</span></p>
+      <p class="foot-slogan">세상을 바라보는 방식이 다를 뿐, 누구나 동등한 배움의 기회와 꿈을 가질 수 있어야 합니다.</p>
+    </div>
+    <div class="foot-col">
+      <h2>연락처</h2>
+      <p>김정훈 · <a href="mailto:whoshoony@naver.com">whoshoony@naver.com</a></p>
+    </div>
+    <div class="foot-col">
+      <h2>접근성 안내</h2>
+      <p>이 홈페이지는 한국형 웹 콘텐츠 접근성 지침(KWCAG) 2.2를 지키는 것을 목표로 만들었습니다. 불편한 곳이 있으면 알려 주세요.</p>
+    </div>
+    <p class="copyright">© 2026 퍼플아이</p>
+  </div>
+</footer>
+
+<script>
+/* 페이지 전환: 주소의 #이 페이지 이름이면 그 페이지를, 페이지 안 구역 이름이면 그 구역을 보여 준다 */
+(function () {
+  var VIEWS = ['home', 'business', 'company', 'join', 'story', 'family', 'teacher', 'creator'];
+  var TITLES = { home: '퍼플아이', business: '사업 소개 · 퍼플아이', company: '회사 소개 · 퍼플아이', join: '함께하기 · 퍼플아이', story: '시작한 이야기 · 퍼플아이', family: '학생·부모님 · 퍼플아이', teacher: '특수교사·복지관 · 퍼플아이', creator: '강의하는 분 · 퍼플아이' };
+  var root = document.documentElement;
+  var navLinks = document.querySelectorAll('[data-nav]');
+
+  function resolve(id) {
+    if (!id) return { view: 'home', target: null };
+    if (VIEWS.indexOf(id) >= 0) return { view: id, target: null };
+    var el = document.getElementById(id);
+    if (!el) return { view: 'home', target: null };
+    var holder = el.closest('.view');
+    if (!holder) return null;
+    return { view: holder.id, target: el };
+  }
+
+  function show(view) {
+    var before = root.getAttribute('data-view');
+    root.setAttribute('data-view', view);
+    for (var i = 0; i < navLinks.length; i++) {
+      if (navLinks[i].getAttribute('data-nav') === view) navLinks[i].setAttribute('aria-current', 'page');
+      else navLinks[i].removeAttribute('aria-current');
+    }
+    document.title = TITLES[view] || TITLES.home;
+    if (before !== view) document.dispatchEvent(new CustomEvent('viewchange', { detail: view }));
+  }
+
+  function route(initial) {
+    var id = '';
+    try { id = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { id = ''; }
+    var r = resolve(id);
+    if (!r) return;
+    show(r.view);
+    if (r.target) {
+      r.target.scrollIntoView({ block: 'start' });
+      if (!initial) {
+        var heading = r.target.querySelector('h2') || r.target;
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+      }
+    } else if (!initial) {
+      window.scrollTo(0, 0);
+      var h1 = document.querySelector('#' + r.view + ' h1');
+      if (h1) h1.focus({ preventScroll: true });
+    }
+  }
+
+  window.addEventListener('hashchange', function () { route(false); });
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href');
+    if (href === '#main') {
+      e.preventDefault();
+      var main = document.getElementById('main');
+      main.focus({ preventScroll: true });
+      main.scrollIntoView({ block: 'start' });
+      return;
+    }
+    if (href === location.hash) { e.preventDefault(); route(false); }
+  });
+  route(true);
+})();
+
+/* 소리로 듣기: 예시 두 가지(나눗셈 · 세 자리 수의 덧셈) 중 고른 장면을 기기의 음성으로 읽고, 장면 카드에 자막처럼 보여 준다.
+   장면은 좌우로 넘기거나 아래 점(버튼)으로 바꾼다. 장면을 바꾸면 읽던 소리는 멈춘다. */
+(function () {
+  var SCENES = [
+    { name: '나눗셈', segments: [
+      { who: 'teacher', row: 0, text: '자, 사탕을 세 친구에게 똑같이 나눠 줄 거예요.' },
+      { who: 'narration', row: 1, text: '칠판에 사탕을 뜻하는 동그라미 12개가 그려져 있습니다.' },
+      { who: 'teacher', row: 2, text: '이렇게, 이렇게, 이렇게 묶어 보면, 한 친구에게 몇 개씩일까요?' },
+      { who: 'narration', row: 3, text: '동그라미 12개를 4개씩 묶어 세 묶음으로 나눴습니다.' },
+      { who: 'teacher', row: 4, text: '맞아요, 네 개씩이에요. 그래서 12 나누기 3은 4예요.' }
+    ] },
+    { name: '세 자리 수의 덧셈', segments: [
+      { who: 'teacher', row: 0, text: '자, 이번엔 이 문제를 풀어 볼게요.' },
+      { who: 'narration', row: 1, text: '칠판에 세로셈이 있습니다. 위에 256, 아래에 178, 더하기입니다.' },
+      { who: 'teacher', row: 2, text: '일의 자리부터 더하면 이렇게 되죠? 여기에 이거 쓰고, 하나는 여기로 올려 주고요.' },
+      { who: 'narration', row: 3, text: '일의 자리 6과 8을 더하면 14입니다. 4를 일의 자리 아래에 쓰고, 1은 십의 자리 위에 작게 올려 적었습니다.' },
+      { who: 'teacher', row: 4, text: '그럼 십의 자리도 똑같이 해 볼까요?' }
+    ] }
+  ];
+  var playOriginal = document.getElementById('play-original');
+  var playDescribed = document.getElementById('play-described');
+  var stopButton = document.getElementById('stop-audio');
+  var statusEl = document.getElementById('player-status');
+  var track = document.getElementById('scene-track');
+  var cards = track.querySelectorAll('.scene');
+  var dots = document.querySelectorAll('.scene-dot');
+  var transcript = document.getElementById('transcript');
+  var synth = window.speechSynthesis;
+  var speechOK = !!synth && typeof window.SpeechSynthesisUtterance !== 'undefined';
+  var current = 0;
+  var runId = 0;
+  var voices = [];
+
+  function setStatus(message) { statusEl.textContent = message; }
+  function rowsOf(i) { return transcript.querySelectorAll('.lines[data-scene="' + i + '"] li'); }
+  function clearLines() {
+    var all = transcript.querySelectorAll('.lines li');
+    for (var k = 0; k < all.length; k++) all[k].classList.remove('is-speaking');
+  }
+  function showCaption(i, seg) {
+    var who = cards[i].querySelector('.cap-who');
+    var line = cards[i].querySelector('.cap-line');
+    var n = seg.who === 'narration';
+    who.textContent = n ? '퍼플아이 해설' : '강사';
+    who.className = n ? 'cap-who is-n' : 'cap-who';
+    line.textContent = '“' + seg.text + '”';
+  }
+  function finish(message) {
+    clearLines();
+    for (var k = 0; k < cards.length; k++) showCaption(k, SCENES[k].segments[0]);
+    stopButton.disabled = true;
+    setStatus(message || '');
+  }
+  function stop(message) {
+    runId += 1;
+    if (speechOK) synth.cancel();
+    finish(message);
+  }
+
+  /* 장면 고르기 */
+  function markDots(i) {
+    for (var k = 0; k < dots.length; k++) {
+      if (k === i) dots[k].setAttribute('aria-current', 'true');
+      else dots[k].removeAttribute('aria-current');
+    }
+  }
+  var lineGroups = transcript.querySelectorAll('[data-scene]');
+  function syncTranscript(i) {
+    for (var k = 0; k < lineGroups.length; k++) lineGroups[k].hidden = Number(lineGroups[k].getAttribute('data-scene')) !== i;
+  }
+  syncTranscript(current);
+  function cardLeft(i) { return cards[i].offsetLeft - cards[0].offsetLeft; }
+  function select(i, fromScroll) {
+    if (i !== current) {
+      if (!stopButton.disabled) stop('');
+      current = i;
+      markDots(i);
+      syncTranscript(i);
+      if (speechOK) setStatus('‘' + SCENES[i].name + '’ 예시를 골랐습니다.');
+    }
+    if (!fromScroll) track.scrollTo({ left: cardLeft(i) });
+  }
+  for (var d = 0; d < dots.length; d++) {
+    dots[d].addEventListener('click', function () { select(Number(this.getAttribute('data-scene')), false); });
+  }
+  var settle = null;
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var best = 0;
+      for (var k = 1; k < cards.length; k++) {
+        if (Math.abs(cardLeft(k) - track.scrollLeft) < Math.abs(cardLeft(best) - track.scrollLeft)) best = k;
+      }
+      if (best !== current) select(best, true);
+    }, 120);
+  }, { passive: true });
+  window.addEventListener('resize', function () { track.scrollTo({ left: cardLeft(current), behavior: 'instant' }); });
+
+  /* 소리 */
+  if (!speechOK) {
+    playOriginal.disabled = true;
+    playDescribed.disabled = true;
+    transcript.open = true;
+    setStatus('이 브라우저는 음성 읽기를 지원하지 않습니다. 아래 글로 비교해 보세요.');
+    return;
+  }
+  function loadVoices() { try { voices = synth.getVoices() || []; } catch (e) { voices = []; } }
+  loadVoices();
+  if ('onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
+  function koreanVoice() {
+    for (var i = 0; i < voices.length; i++) { if (/^ko/i.test(voices[i].lang)) return voices[i]; }
+    return null;
+  }
+
+  function play(mode) {
+    runId += 1;
+    var myRun = runId;
+    var i = current;
+    var scene = SCENES[i];
+    var rows = rowsOf(i);
+    synth.cancel();
+    var list = scene.segments.filter(function (s) { return mode === 'described' || s.who === 'teacher'; });
+    var voice = koreanVoice();
+    stopButton.disabled = false;
+    setStatus('‘' + scene.name + '’ 예시의 ' + (mode === 'described' ? '해설본을 읽고 있습니다.' : '원본을 읽고 있습니다. 강사 목소리만 나옵니다.'));
+    if (voices.length && !voice) setStatus('이 기기에는 한국어 음성이 없어 소리가 어색할 수 있습니다. 아래 글로도 비교할 수 있습니다.');
+    var index = 0;
+    function next() {
+      if (myRun !== runId) return;
+      clearLines();
+      if (index >= list.length) { finish('끝까지 읽었습니다.'); return; }
+      var seg = list[index++];
+      showCaption(i, seg);
+      if (rows[seg.row]) rows[seg.row].classList.add('is-speaking');
+      var u = new SpeechSynthesisUtterance(seg.text);
+      u.lang = 'ko-KR';
+      if (voice) u.voice = voice;
+      u.rate = seg.who === 'narration' ? 1.0 : 1.05;
+      u.pitch = seg.who === 'narration' ? 1.15 : 0.9;
+      u.onend = function () { setTimeout(next, seg.who === 'narration' ? 350 : 250); };
+      u.onerror = function () { if (myRun === runId) finish('음성을 재생하지 못했습니다. 아래 글로 비교해 보세요.'); };
+      synth.speak(u);
+    }
+    next();
+  }
+
+  playOriginal.addEventListener('click', function () { play('original'); });
+  playDescribed.addEventListener('click', function () { play('described'); });
+  stopButton.addEventListener('click', function () { stop('멈췄습니다.'); });
+  document.addEventListener('viewchange', function () { if (!stopButton.disabled) stop(''); });
+})();
+
+/* 사업 소개의 예시 듣기 (버전 1에서 가져옴): 기기의 음성으로 원본(강사만) 또는 해설본을 읽는다 */
+(function () {
+  var segments = [
+    { who: 'teacher', row: 0, text: '자, 이번엔 이 문제를 풀어 볼게요.' },
+    { who: 'narration', row: 1, text: '칠판에 세로셈이 있습니다. 위에 256, 아래에 178, 더하기입니다.' },
+    { who: 'teacher', row: 2, text: '일의 자리부터 더하면 이렇게 되죠? 여기에 이거 쓰고, 하나는 여기로 올려 주고요.' },
+    { who: 'narration', row: 3, text: '일의 자리 6과 8을 더하면 14입니다. 4를 일의 자리 아래에 쓰고, 1은 십의 자리 위에 작게 올려 적었습니다.' },
+    { who: 'teacher', row: 4, text: '그럼 십의 자리도 똑같이 해 볼까요?' }
+  ];
+  var playOriginal = document.getElementById('biz-play-original');
+  var playDescribed = document.getElementById('biz-play-described');
+  var stopButton = document.getElementById('biz-stop-audio');
+  var statusEl = document.getElementById('biz-player-status');
+  var rows = document.querySelectorAll('.script tbody tr');
+  var synth = window.speechSynthesis;
+  var runId = 0;
+  var voices = [];
+
+  function setStatus(message) { statusEl.textContent = message; }
+  function clearRows() { for (var i = 0; i < rows.length; i++) rows[i].classList.remove('is-speaking'); }
+
+  if (!synth || typeof window.SpeechSynthesisUtterance === 'undefined') {
+    playOriginal.disabled = true;
+    playDescribed.disabled = true;
+    setStatus('이 브라우저는 음성 읽기를 지원하지 않습니다. 아래 대본으로 비교해 보세요.');
+    return;
+  }
+
+  function loadVoices() { try { voices = synth.getVoices() || []; } catch (e) { voices = []; } }
+  loadVoices();
+  if ('onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
+  function koreanVoice() {
+    for (var i = 0; i < voices.length; i++) { if (/^ko/i.test(voices[i].lang)) return voices[i]; }
+    return null;
+  }
+
+  function finish(message) {
+    clearRows();
+    stopButton.disabled = true;
+    setStatus(message);
+  }
+
+  function play(mode) {
+    runId += 1;
+    var myRun = runId;
+    synth.cancel();
+    var list = segments.filter(function (s) { return mode === 'described' || s.who === 'teacher'; });
+    var voice = koreanVoice();
+    stopButton.disabled = false;
+    setStatus(mode === 'described' ? '해설본을 읽고 있습니다.' : '원본을 읽고 있습니다. 강사 목소리만 나옵니다.');
+    if (voices.length && !voice) setStatus('이 기기에는 한국어 음성이 없어 소리가 어색할 수 있습니다. 아래 대본으로도 비교할 수 있습니다.');
+    var index = 0;
+    function next() {
+      if (myRun !== runId) return;
+      clearRows();
+      if (index >= list.length) { finish('끝까지 읽었습니다.'); return; }
+      var seg = list[index++];
+      if (rows[seg.row]) rows[seg.row].classList.add('is-speaking');
+      var u = new SpeechSynthesisUtterance(seg.text);
+      u.lang = 'ko-KR';
+      if (voice) u.voice = voice;
+      u.rate = seg.who === 'narration' ? 1.0 : 1.05;
+      u.pitch = seg.who === 'narration' ? 1.15 : 0.9;
+      u.onend = function () { setTimeout(next, seg.who === 'narration' ? 350 : 250); };
+      u.onerror = function () { if (myRun === runId) finish('음성을 재생하지 못했습니다. 아래 대본으로 비교해 보세요.'); };
+      synth.speak(u);
+    }
+    next();
+  }
+
+  playOriginal.addEventListener('click', function () { play('original'); });
+  playDescribed.addEventListener('click', function () { play('described'); });
+  function stop(message) {
+    runId += 1;
+    synth.cancel();
+    finish(message);
+  }
+  stopButton.addEventListener('click', function () { stop('멈췄습니다.'); });
+  document.addEventListener('viewchange', function () { if (!stopButton.disabled) stop(''); });
+})();
+</script>
+
+</body>
+</html>
