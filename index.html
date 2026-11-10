@@ -297,10 +297,17 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
 .cap-line { font-size: var(--t-cap); font-weight: 700; line-height: 1.5; letter-spacing: -0.01em; color: var(--stage-ink); }
 
 .transcript { margin-top: clamp(24px, 3vw, 36px); border-top: 1px solid var(--stage-line); }
-.transcript summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; list-style: none; cursor: pointer; font-weight: 700; color: var(--stage-accent); }
-.transcript summary::-webkit-details-marker { display: none; }
-.transcript summary::after { content: "+"; content: "+" / ""; font-family: var(--font-en); font-size: 1.5rem; line-height: 1; }
-.transcript[open] summary::after { content: "−"; content: "−" / ""; }
+/* 소리 없이 글로 보기: 처음 두 줄을 미리 보여 주고 '더 보기'로 펼친다. 스크립트가 안 돌면 전체가 보인다 */
+.transcript-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding-top: 8px; font-size: 1.125rem; font-weight: 700; color: var(--stage-accent); cursor: pointer; }
+.transcript-title::after { content: "−"; content: "−" / ""; font-family: var(--font-en); font-size: 1.5rem; line-height: 1; }
+.transcript.is-collapsed .transcript-title::after { content: "+"; content: "+" / ""; }
+.transcript.is-collapsed .lines li:nth-child(n+3), .transcript.is-collapsed .note { display: none; }
+.transcript.is-collapsed .lines { -webkit-mask-image: linear-gradient(#000 58%, rgba(0, 0, 0, 0.45)); mask-image: linear-gradient(#000 58%, rgba(0, 0, 0, 0.45)); }
+.transcript-more { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 6px 0 4px; padding: 8px 20px; border: 1.5px solid var(--stage-accent); border-radius: 999px; background: transparent; color: var(--stage-accent); font: inherit; font-weight: 700; cursor: pointer; }
+.transcript-more:hover { background: var(--stage-raise); }
+.transcript-more[hidden] { display: none; }
+.tm-icon { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(45deg); }
+.transcript-more[aria-expanded="true"] .tm-icon { transform: translateY(2px) rotate(-135deg); }
 .lines { list-style: none; padding: 0 0 8px; display: grid; gap: 8px; }
 .lines li { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; font-size: var(--t-desc); color: var(--stage-ink); }
 .lines .who { font-size: var(--t-caption); font-weight: 700; color: var(--stage-soft); }
@@ -637,6 +644,7 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
     radial-gradient(30rem 18rem at 100% -10%, var(--stage-gold), transparent 60%);
 }
 @media (prefers-contrast: more), (forced-colors: active), print {
+  .transcript.is-collapsed .lines { -webkit-mask-image: none; mask-image: none; }
   .h1-grad { background: none; color: var(--ink); -webkit-text-fill-color: currentColor; }
   .hero::before, .stage::before, .paths-sec::before, .page-head::before, .page-hero::before, .contact-band::before, .site-footer::before { display: none; }
   .page-head { background: var(--band); }
@@ -745,9 +753,9 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
       </div>
 
       <div class="wrap">
-        <details class="transcript" id="transcript">
-          <summary>들리는 내용 글로 보기</summary>
-          <h3 class="lines-title" data-scene="0">예시 1 · 나눗셈</h3>
+        <div class="transcript" id="transcript">
+          <h3 class="transcript-title">소리 없이 글로 보기</h3>
+          <h4 class="lines-title" data-scene="0">예시 1 · 나눗셈</h4>
           <ol class="lines" role="list" data-scene="0">
             <li data-row="0"><span class="who">강사</span>“자, 사탕을 세 친구에게 똑같이 나눠 줄 거예요.”</li>
             <li data-row="1"><span class="who who-n">퍼플아이 해설 · 강사가 말하지 않는 틈에</span>“칠판에 사탕을 뜻하는 동그라미 12개가 그려져 있습니다.”</li>
@@ -755,7 +763,7 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
             <li data-row="3"><span class="who who-n">퍼플아이 해설 · 강의를 잠시 멈추고</span>“동그라미 12개를 4개씩 묶어 세 묶음으로 나눴습니다.”</li>
             <li data-row="4"><span class="who">강사</span>“맞아요, 네 개씩이에요. 그래서 12 나누기 3은 4예요.”</li>
           </ol>
-          <h3 class="lines-title" data-scene="1">예시 2 · 세 자리 수의 덧셈</h3>
+          <h4 class="lines-title" data-scene="1">예시 2 · 세 자리 수의 덧셈</h4>
           <ol class="lines" role="list" data-scene="1">
             <li data-row="0"><span class="who">강사</span>“자, 이번엔 이 문제를 풀어 볼게요.”</li>
             <li data-row="1"><span class="who who-n">퍼플아이 해설 · 강사가 말하지 않는 틈에</span>“칠판에 세로셈이 있습니다. 위에 256, 아래에 178, 더하기입니다.”</li>
@@ -764,7 +772,8 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
             <li data-row="4"><span class="who">강사</span>“그럼 십의 자리도 똑같이 해 볼까요?”</li>
           </ol>
           <p class="note">설명을 위해 만든 예시이며, 소리는 지금 쓰는 기기의 음성으로 읽습니다.</p>
-        </details>
+          <button type="button" class="transcript-more" id="transcript-more" aria-expanded="false" hidden><span class="tm-label">더 보기</span><span class="sr-only"> (예시 대본 전체)</span><span class="tm-icon" aria-hidden="true"></span></button>
+        </div>
       </div>
     </section>
 
@@ -1461,6 +1470,18 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
       else dots[k].removeAttribute('aria-current');
     }
   }
+  var moreButton = document.getElementById('transcript-more');
+  function setExpanded(on) {
+    transcript.classList.toggle('is-collapsed', !on);
+    moreButton.setAttribute('aria-expanded', on ? 'true' : 'false');
+    moreButton.querySelector('.tm-label').textContent = on ? '접기' : '더 보기';
+  }
+  moreButton.hidden = false;
+  setExpanded(false);
+  function toggleMore() { setExpanded(moreButton.getAttribute('aria-expanded') !== 'true'); }
+  moreButton.addEventListener('click', toggleMore);
+  /* 제목 줄(+ 표시)을 눌러도 펼쳐진다. 키보드·화면낭독기는 아래 '더 보기' 버튼을 쓴다 */
+  transcript.querySelector('.transcript-title').addEventListener('click', toggleMore);
   var lineGroups = transcript.querySelectorAll('[data-scene]');
   function syncTranscript(i) {
     for (var k = 0; k < lineGroups.length; k++) lineGroups[k].hidden = Number(lineGroups[k].getAttribute('data-scene')) !== i;
@@ -1497,7 +1518,7 @@ main:focus, h1:focus, h2[tabindex="-1"]:focus { outline: none; }
   if (!speechOK) {
     playOriginal.disabled = true;
     playDescribed.disabled = true;
-    transcript.open = true;
+    setExpanded(true);
     setStatus('이 브라우저는 음성 읽기를 지원하지 않습니다. 아래 글로 비교해 보세요.');
     return;
   }
